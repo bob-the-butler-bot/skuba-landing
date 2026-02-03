@@ -601,52 +601,6 @@ section {
     padding: 18px 32px;
 }
 
-/* Testimonials Section */
-.testimonials {
-    background: var(--bg);
-    padding: 100px 0;
-}
-
-.testimonials-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 32px;
-    margin-top: 48px;
-}
-
-.testimonial-card {
-    background: var(--bg-secondary);
-    padding: 32px;
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.testimonial-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px var(--shadow);
-}
-
-.testimonial-stars {
-    font-size: 20px;
-    margin-bottom: 16px;
-}
-
-.testimonial-text {
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--text);
-    margin-bottom: 20px;
-    font-style: italic;
-}
-
-.testimonial-author {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    margin: 0;
-}
-
 /* FAQ Section */
 .faq {
     background: var(--bg-secondary);
