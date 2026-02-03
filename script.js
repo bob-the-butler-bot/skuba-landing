@@ -49,34 +49,81 @@ const prevBtn = document.querySelector('.carousel-btn.prev');
 const nextBtn = document.querySelector('.carousel-btn.next');
 
 if (track && prevBtn && nextBtn) {
-    let scrollAmount = 0;
-
-    nextBtn.addEventListener('click', () => {
-        scrollAmount += 400;
-        if (scrollAmount > track.scrollWidth - track.clientWidth) {
-            scrollAmount = track.scrollWidth - track.clientWidth;
+    const images = track.querySelectorAll('img');
+    let currentIndex = 0;
+    
+    // Create position indicator
+    const carouselSection = document.querySelector('.screenshots');
+    if (carouselSection && !document.querySelector('.carousel-position')) {
+        const positionIndicator = document.createElement('div');
+        positionIndicator.className = 'carousel-position';
+        positionIndicator.setAttribute('aria-live', 'polite');
+        carouselSection.querySelector('.container').appendChild(positionIndicator);
+        updatePosition();
+    }
+    
+    function updatePosition() {
+        const indicator = document.querySelector('.carousel-position');
+        if (indicator) {
+            indicator.textContent = `${currentIndex + 1} / ${images.length}`;
         }
+        
+        // Update button states
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === images.length - 1;
+        prevBtn.style.opacity = currentIndex === 0 ? '0.3' : '1';
+        nextBtn.style.opacity = currentIndex === images.length - 1 ? '0.3' : '1';
+    }
+    
+    function scrollToIndex(index) {
+        if (index < 0) index = 0;
+        if (index >= images.length) index = images.length - 1;
+        currentIndex = index;
+        
+        const imageWidth = images[0].offsetWidth + parseInt(getComputedStyle(images[0]).marginRight);
         track.scrollTo({
-            left: scrollAmount,
+            left: imageWidth * index,
             behavior: 'smooth'
         });
+        updatePosition();
+    }
+
+    nextBtn.addEventListener('click', () => {
+        scrollToIndex(currentIndex + 1);
     });
 
     prevBtn.addEventListener('click', () => {
-        scrollAmount -= 400;
-        if (scrollAmount < 0) {
-            scrollAmount = 0;
+        scrollToIndex(currentIndex - 1);
+    });
+    
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        // Only respond if carousel is in view
+        const carouselRect = track.getBoundingClientRect();
+        const isInView = carouselRect.top < window.innerHeight && carouselRect.bottom > 0;
+        
+        if (isInView && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
+            e.preventDefault();
+            if (e.key === 'ArrowLeft') {
+                scrollToIndex(currentIndex - 1);
+            } else if (e.key === 'ArrowRight') {
+                scrollToIndex(currentIndex + 1);
+            }
         }
-        track.scrollTo({
-            left: scrollAmount,
-            behavior: 'smooth'
-        });
     });
 
-    // Update scroll position when manually scrolling
+    // Update index when manually scrolling
     track.addEventListener('scroll', () => {
-        scrollAmount = track.scrollLeft;
+        const imageWidth = images[0].offsetWidth + parseInt(getComputedStyle(images[0]).marginRight);
+        const newIndex = Math.round(track.scrollLeft / imageWidth);
+        if (newIndex !== currentIndex) {
+            currentIndex = newIndex;
+            updatePosition();
+        }
     });
+    
+    // Initialize
+    updatePosition();
 }
 
 // Intersection Observer for Fade-in Animations
